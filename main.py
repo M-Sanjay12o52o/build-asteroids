@@ -25,6 +25,8 @@ def main():
             if event.type == pygame.QUIT:
                 return
 
+        player.update(dt)
+
         # Fill the screen with black background
         black = (0, 0, 0)
         screen.fill(black)
