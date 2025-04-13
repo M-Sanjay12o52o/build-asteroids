@@ -33,6 +33,17 @@ class Player(CircleShape):
         if keys[pygame.K_s]:
             self.move(-dt)
 
+        # arrow keys for moving the ship
+        if keys[pygame.K_LEFT]:
+            self.rotation -= PLAYER_TURN_SPEED * dt
+        if keys[pygame.K_RIGHT]:
+            self.rotation += PLAYER_TURN_SPEED * dt
+
+        if keys[pygame.K_UP]:
+            self.move(dt)
+        if keys[pygame.K_DOWN]:
+            self.move(-dt)
+
         # Handle shooting
         if keys[pygame.K_SPACE]:
             self.shoot()
