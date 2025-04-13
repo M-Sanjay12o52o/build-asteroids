@@ -1,11 +1,14 @@
 import pygame
 from circleshape import CircleShape
 from constants import *
+from shot import Shot
+
 
 class Player(CircleShape):
     def __init__(self, x, y):
         super().__init__(x, y, PLAYER_RADIUS)
         self.rotation = 0
+        self.shots_group = pygame.sprite.Group()
 
     def draw(self, screen):
         white = (255, 255, 255)
@@ -16,21 +19,34 @@ class Player(CircleShape):
         self.rotation += PLAYER_TURN_SPEED * dt
 
     def update(self, dt):
-      keys = pygame.key.get_pressed()
+        keys = pygame.key.get_pressed()
 
-      if keys[pygame.K_a]:
-        self.rotation -= PLAYER_TURN_SPEED * dt
-      if keys[pygame.K_d]:
-        self.rotation += PLAYER_TURN_SPEED * dt
+        if keys[pygame.K_a]:
+            self.rotation -= PLAYER_TURN_SPEED * dt
+        if keys[pygame.K_d]:
+            self.rotation += PLAYER_TURN_SPEED * dt
 
-      if keys[pygame.K_w]:
-        self.move(dt)
-      if keys[pygame.K_s]:
-        self.move(-dt)
+        if keys[pygame.K_w]:
+            self.move(dt)
+        if keys[pygame.K_s]:
+            self.move(-dt)
+
+        # Handle shooting
+        if keys[pygame.K_SPACE]:
+            self.shoot()
+
+        self.shots_group.update(dt)
+
+    def shoot(self):
+        # Create a new shot at the player's position and direction
+        print(f"Player Rotation (shooting): {self.rotation}")
+        shot = Shot(self.position, self.rotation)
+        # Add the shot to the shots group
+        self.shots_group.add(shot)
 
     def move(self, dt):
-      forward = pygame.Vector2(0, 1).rotate(self.rotation)
-      self.position += forward * PLAYER_SPEED * dt
+        forward = pygame.Vector2(0, 1).rotate(self.rotation)
+        self.position += forward * PLAYER_SPEED * dt
 
     def triangle(self):
         forward = pygame.Vector2(0, 1).rotate(self.rotation)
@@ -39,6 +55,3 @@ class Player(CircleShape):
         b = self.position - forward * self.radius - right
         c = self.position - forward * self.radius + right
         return [a, b, c]
-
-
-
