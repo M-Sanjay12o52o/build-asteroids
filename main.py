@@ -57,6 +57,12 @@ def main():
         dt = clock.tick(60) / 1000.0
         print(f"Delta time: {dt:.3f} seconds")
 
+        # asteroid descrution
+        for asteroid in asteroids:
+            for bullet in player.shots_group:
+                if asteroid.rect.colliderect(bullet.rect):
+                    asteroid.kill()
+
 
 if __name__ == "__main__":
     main()
