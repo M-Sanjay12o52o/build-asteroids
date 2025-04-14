@@ -1,5 +1,6 @@
 import pygame
-from constants import *
+from constants import SCREEN_HEIGHT
+from constants import SCREEN_WIDTH
 from player import Player
 from asteroid import Asteroid
 from asteroidfield import AsteroidField
@@ -49,16 +50,6 @@ def main():
 
         # Fill the screen with black background
         screen.fill("black")
-
-        # Draw the player
-        # player.draw(screen)
-        # drawable.draw(screen)
-        # for sprite in drawable:
-        # sprite.draw(screen)
-
-        # Draw shots separately if you want additional styling
-        # player.shots_group.update(dt)
-        # player.shots_group.draw(screen)
 
         for obj in drawable:
             obj.draw(screen)
