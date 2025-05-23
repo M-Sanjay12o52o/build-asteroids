@@ -90,6 +90,9 @@ def main():
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 start_button.check_click(event.pos)
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE or event.key == pygame.K_RETURN:
+                    start_game()
 
         start_button.draw(screen)
         pygame.display.flip()

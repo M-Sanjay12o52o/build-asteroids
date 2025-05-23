@@ -1,0 +1,8 @@
+- [ ] add logic to restart the game after failing from first attempt
+- [ ] adding scoring logic
+- [ ] turn triangle player to a rocket
+- [ ] Start and restart game through keyboard action
+- [ ] Audio
+  - [ ] add collision sound
+  - [ ] add rocket firing sound
+  - [ ] rocket moving should also produce sound
