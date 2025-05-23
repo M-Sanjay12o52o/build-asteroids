@@ -52,9 +52,8 @@ def main():
     Asteroid.containers = (asteroids, updatable, drawable)
     Shot.containers = (shots, updatable, drawable)
     AsteroidField.containers = updatable
-    AsteroidField()
-
     Player.containers = (updatable, drawable)
+    AsteroidField()
 
     player = Player(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
 
@@ -62,82 +61,108 @@ def main():
 
     global start
     start = False
+    game_over = False
 
     start_button = Button(
-        SCREEN_WIDTH / 2 - 100,
+        SCREEN_WIDTH / 2 - 150,
         SCREEN_HEIGHT / 2 - 50,
-        200,
+        300,
         50,
-        "Start Game",
+        "Start Game [Space]",
         start_game,
     )
     restart_button = Button(
-        SCREEN_WIDTH / 2 - 100,
+        SCREEN_WIDTH / 2 - 150,
         SCREEN_HEIGHT / 2 - 50,
-        200,
+        300,
         50,
-        "Restart Game",
+        "Restart Game [r]",
         restart_game,
     )
+    quit_button = Button(
+        SCREEN_WIDTH / 2 - 150,
+        SCREEN_HEIGHT / 2 + 70,
+        300,
+        50,
+        "Quit [q]",
+        lambda: pygame.event.post(pygame.event.Event(pygame.QUIT)),
+    )
+    quit_button.color = (255, 0, 0)
 
-    while not start:
+    exit_button = Button(
+        SCREEN_WIDTH / 2 - 100,
+        SCREEN_HEIGHT / 2 + 70,
+        300,
+        50,
+        "Exit [x]",
+        lambda: pygame.event.post(pygame.event.Event(pygame.QUIT)),
+    )
+    exit_button.color = (255, 0, 0)
+
+    running = True
+    # while not start:
+    while running:
         screen.fill("black")
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
+                # pygame.quit()
+                # sys.exit()
+                running = False
 
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                start_button.check_click(event.pos)
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE or event.key == pygame.K_RETURN:
-                    start_game()
-
-        start_button.draw(screen)
-        pygame.display.flip()
-        clock.tick(60)
-
-    while start:
-        # Fill the screen with black background
-        screen.fill("black")
-
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                restart_button.check_click(event.pos)
-
-        # player.update(dt)
-        updatable.update(dt)
-
-        # asteroid descrution
-        for asteroid in asteroids:
-            if asteroid.collides_with(player):
-                print("Game over you are done!")
-                start = False
-                break
-
-            for shot in shots:
-                if asteroid.collides_with(shot):
-                    shot.kill()
-                    asteroid.split()
-
-        for obj in drawable:
-            obj.draw(screen)
-
-        # Update the display
-        pygame.display.flip()
-
-        # Calculate the delta time for smoother movement (if needed)
-        dt = clock.tick(60) / 1000.0
+            if not start:
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    start_button.check_click(event.pos)
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_SPACE or event.key == pygame.K_RETURN:
+                        start_game()
+            elif game_over:
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    restart_button.check_click(event.pos)
+                    quit_button.check_click(event.pos)
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_r or event.key == pygame.K_RETURN:
+                        restart_game()
+                    elif event.key == pygame.K_q:
+                        pygame.event.post(pygame.event.Event(pygame.QUIT))
 
         if not start:
+            start_button.draw(screen)
+        elif start and not game_over:
+            # Game running logic
+            updatable.update(dt)
+
+            for asteroid in asteroids:
+                if asteroid.collides_with(player):
+                    print("Game over!")
+                    game_over = True  # Set game_over to True
+                    # You might want to stop player movement or clear asteroids here
+                    # For a full restart, you'd re-initialize game elements
+                    break  # Break out of inner loop to prevent multiple game over messages
+
+                for shot in shots:
+                    if asteroid.collides_with(shot):
+                        shot.kill()
+                        asteroid.split()
+
+            for obj in drawable:
+                obj.draw(screen)
+        elif game_over:
+            # Game over screen
+            font = pygame.font.Font(None, 60)
+            game_over_text = font.render("Game Over!", True, (255, 0, 0))
+            text_rect = game_over_text.get_rect(
+                center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 100)
+            )
+            screen.blit(game_over_text, text_rect)
             restart_button.draw(screen)
-            pygame.display.flip()
-            clock.tick(60)
+            quit_button.draw(screen)
+
+        pygame.display.flip()
+        dt = clock.tick(60) / 1000.0
+
+    pygame.quit()  # It's generally good practice to call pygame.quit() when your program truly ends
+    sys.exit()  # And sys.exit() to ensure the Python script terminates
 
 
 if __name__ == "__main__":
